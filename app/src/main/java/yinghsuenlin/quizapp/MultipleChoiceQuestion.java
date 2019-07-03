@@ -12,12 +12,14 @@ public class MultipleChoiceQuestion extends Question {
 
     public int getOptionsResId()
     {
+
         return mOptionsResId;
     }
 
     @Override
     public boolean checkAnswer(int ans)
     {
+
         return mAnswer == ans;
     }
 

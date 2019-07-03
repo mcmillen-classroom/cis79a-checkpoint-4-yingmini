@@ -12,13 +12,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-
+public class MainActivity extends AppCompatActivity implements View.OnClickListener
+{
     private TextView mTextView;
     private EditText mEditText;
 
+
     private LinearLayout mTrueFalseContainer;
     private LinearLayout mFillTheBlankContainer;
+    private LinearLayout mMultipleChoiceContainer;
 
     private Button mTrueButton;
     private Button mFalseButton;
@@ -26,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageButton mNextButton;
     private Button mHintButton;
     private Button mCheckButton;
+    private Button maButton;
+    private Button mbButton;
+    private Button mcButton;
 
     private Question[] mQuestions;
     private int mIndex;
@@ -42,9 +47,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNextButton = (ImageButton) findViewById(R.id.next_button);
         mHintButton = (Button) findViewById(R.id.hint_button);
         mCheckButton = (Button) findViewById(R.id.check_button);
+        maButton = (Button) findViewById(R.id.a_button);
+        mbButton = (Button) findViewById(R.id.b_button);
+        mcButton = (Button) findViewById(R.id.c_button);
 
         mTrueFalseContainer = (LinearLayout) findViewById(R.id.true_false_container);
         mFillTheBlankContainer = (LinearLayout) findViewById(R.id.fill_the_blank_container);
+        mMultipleChoiceContainer = (LinearLayout) findViewById(R.id.multiple_choice_container);
 
         mEditText = (EditText) findViewById(R.id.edit_text);
 
@@ -54,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mNextButton.setOnClickListener(this);
         mHintButton.setOnClickListener(this);
         mCheckButton.setOnClickListener(this);
+        maButton.setOnClickListener(this);
+        mbButton.setOnClickListener(this);
+        mcButton.setOnClickListener(this);
 
         mTextView = (TextView) findViewById(R.id.text_view);
 
@@ -89,7 +101,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             checkAnswer(mEditText.getText().toString());
         }
-
+        else if(view.getId() == R.id.a_button)
+        {
+            checkAnswer(0);
+        }
+        else if(view.getId() == R.id.b_button)
+        {
+            checkAnswer(1);
+        }
+        else if(view.getId() == R.id.c_button)
+        {
+            checkAnswer(2);
+        }
         else if(view.getId() == R.id.pre_button) {
             mIndex--;
 
@@ -132,21 +155,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             mTrueFalseContainer.setVisibility(View.VISIBLE);
             mFillTheBlankContainer.setVisibility(View.GONE);
+            mMultipleChoiceContainer.setVisibility(View.GONE);
         }
         else if (mQuestions[mIndex].isFillTheBlankQuestion())
         {
             mTrueFalseContainer.setVisibility(View.GONE);
             mFillTheBlankContainer.setVisibility(View.VISIBLE);
+            mMultipleChoiceContainer.setVisibility(View.GONE);
         }
         else if(mQuestions[mIndex].isMultipleChoiceQuestion())
         {
-            // TODO: hide and show relevance containers
+            // td: hide and show relevance containers
+            mTrueFalseContainer.setVisibility(View.GONE);
+            mFillTheBlankContainer.setVisibility(View.GONE);
+            mMultipleChoiceContainer.setVisibility(View.VISIBLE);
 
             int optionsResId = ((MultipleChoiceQuestion) mQuestions[mIndex]).getOptionsResId();
             String[] options = getResources().getStringArray(optionsResId);
 
             // TODO: use options array to the text of each MC button
             // index 0 is for button a ... index 3 is for button D.
+            maButton.setText(options[0]);
+            mbButton.setText(options[1]);
+            mcButton.setText(options[2]);
         }
     }
 
@@ -185,4 +216,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return false;
         }
     }
+
+    public boolean checkAnswer(int userInput)
+    {
+        if(mQuestions[mIndex].checkAnswer(userInput))
+        {
+            Toast myToast = Toast.makeText(this, "You are correct!", Toast.LENGTH_SHORT);
+            myToast.setGravity(Gravity.TOP, 0, 180);
+            myToast.show();
+            return true;
+        }
+        else
+        {
+            Toast myToast = Toast.makeText(this, "You are incorrect!", Toast.LENGTH_SHORT);
+            myToast.setGravity(Gravity.TOP, 0, 180);
+            myToast.show();
+            return false;
+        }
+    }
+
 }
